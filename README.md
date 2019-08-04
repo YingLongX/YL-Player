@@ -1,9 +1,10 @@
 [![YL Player](https://github.com/YingLongX/images/blob/master/YL_icon150.png?raw=true)](https://github.com/YingLongX/YL-Player)
 # YL Player
 [![Release](https://img.shields.io/badge/Release-v2.0.0.0--beta-green)](https://github.com/YingLongX/YL-Player/releases/latest)
+
 Audio player that supports various formats and streaming audio
 
-# New Features!
+# :memo: New Features!
 - [x] Added playlist
 - [x] Added equalizer
 - [x] Added visualisation
