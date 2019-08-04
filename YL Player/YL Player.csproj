@@ -1,0 +1,310 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{C62A9879-C266-4843-B431-F7C551314071}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>YL_Player</RootNamespace>
+    <AssemblyName>YL Player</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Resources\Icon.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Bass.Net, Version=2.4.10.3, Culture=neutral, PublicKeyToken=b7566c273e6ef480, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Release\Bass.Net.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="taglib-sharp, Version=2.0.3.7, Culture=neutral, PublicKeyToken=db62eba44689b5b0, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Release\taglib-sharp.dll</HintPath>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Compile Include="About.xaml.cs">
+      <DependentUpon>About.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Player.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="RGB.cs" />
+    <Compile Include="Styles\CustomizedAboutWindow\AboutWindowStyle.cs" />
+    <Compile Include="Styles\CustomizedWindow\WindowStyle.cs" />
+    <Compile Include="Visualization.cs" />
+    <Page Include="About.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="DeskBand.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DeskBand.xaml.cs">
+      <DependentUpon>DeskBand.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Page Include="Styles\CustomizedAboutWindow\AboutWindowStyle.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Styles\CustomizedWindow\WindowStyle.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <AppDesigner Include="Properties\" />
+    <Resource Include="Resources\font.otf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Move32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Next32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Pause32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Play32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Prev32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Hide32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\bg.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\NextDark.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\EQDark.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\HelpDark.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\InfoDark.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\MinusDark.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Music-128.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\MuteDark.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\NoRepeatDark.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\PauseDark.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\PlayDark.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\PlusDark.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\RepeatDark.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\SaveAsDark.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\PrevDark.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\VolumeUpDark.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\AudioFileDark.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\CloseDark.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\DeleteTrashDark.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\RecordImages\0.png" />
+    <Resource Include="Resources\RecordImages\1.png" />
+    <Resource Include="Resources\RecordImages\10.png" />
+    <Resource Include="Resources\RecordImages\11.png" />
+    <Resource Include="Resources\RecordImages\12.png" />
+    <Resource Include="Resources\RecordImages\13.png" />
+    <Resource Include="Resources\RecordImages\14.png" />
+    <Resource Include="Resources\RecordImages\15.png" />
+    <Resource Include="Resources\RecordImages\16.png" />
+    <Resource Include="Resources\RecordImages\17.png" />
+    <Resource Include="Resources\RecordImages\18.png" />
+    <Resource Include="Resources\RecordImages\19.png" />
+    <Resource Include="Resources\RecordImages\2.png" />
+    <Resource Include="Resources\RecordImages\20.png" />
+    <Resource Include="Resources\RecordImages\21.png" />
+    <Resource Include="Resources\RecordImages\22.png" />
+    <Resource Include="Resources\RecordImages\23.png" />
+    <Resource Include="Resources\RecordImages\24.png" />
+    <Resource Include="Resources\RecordImages\25.png" />
+    <Resource Include="Resources\RecordImages\26.png" />
+    <Resource Include="Resources\RecordImages\27.png" />
+    <Resource Include="Resources\RecordImages\28.png" />
+    <Resource Include="Resources\RecordImages\29.png" />
+    <Resource Include="Resources\RecordImages\3.png" />
+    <Resource Include="Resources\RecordImages\30.png" />
+    <Resource Include="Resources\RecordImages\31.png" />
+    <Resource Include="Resources\RecordImages\32.png" />
+    <Resource Include="Resources\RecordImages\33.png" />
+    <Resource Include="Resources\RecordImages\34.png" />
+    <Resource Include="Resources\RecordImages\35.png" />
+    <Resource Include="Resources\RecordImages\36.png" />
+    <Resource Include="Resources\RecordImages\37.png" />
+    <Resource Include="Resources\RecordImages\38.png" />
+    <Resource Include="Resources\RecordImages\39.png" />
+    <Resource Include="Resources\RecordImages\4.png" />
+    <Resource Include="Resources\RecordImages\40.png" />
+    <Resource Include="Resources\RecordImages\41.png" />
+    <Resource Include="Resources\RecordImages\42.png" />
+    <Resource Include="Resources\RecordImages\43.png" />
+    <Resource Include="Resources\RecordImages\44.png" />
+    <Resource Include="Resources\RecordImages\45.png" />
+    <Resource Include="Resources\RecordImages\46.png" />
+    <Resource Include="Resources\RecordImages\47.png" />
+    <Resource Include="Resources\RecordImages\48.png" />
+    <Resource Include="Resources\RecordImages\49.png" />
+    <Resource Include="Resources\RecordImages\5.png" />
+    <Resource Include="Resources\RecordImages\50.png" />
+    <Resource Include="Resources\RecordImages\51.png" />
+    <Resource Include="Resources\RecordImages\52.png" />
+    <Resource Include="Resources\RecordImages\53.png" />
+    <Resource Include="Resources\RecordImages\54.png" />
+    <Resource Include="Resources\RecordImages\55.png" />
+    <Resource Include="Resources\RecordImages\56.png" />
+    <Resource Include="Resources\RecordImages\57.png" />
+    <Resource Include="Resources\RecordImages\58.png" />
+    <Resource Include="Resources\RecordImages\59.png" />
+    <Resource Include="Resources\RecordImages\6.png" />
+    <Resource Include="Resources\RecordImages\60.png" />
+    <Resource Include="Resources\RecordImages\61.png" />
+    <Resource Include="Resources\RecordImages\62.png" />
+    <Resource Include="Resources\RecordImages\63.png" />
+    <Resource Include="Resources\RecordImages\64.png" />
+    <Resource Include="Resources\RecordImages\65.png" />
+    <Resource Include="Resources\RecordImages\66.png" />
+    <Resource Include="Resources\RecordImages\7.png" />
+    <Resource Include="Resources\RecordImages\8.png" />
+    <Resource Include="Resources\RecordImages\9.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\NextLight.png" />
+    <Resource Include="Resources\PlayLight.png" />
+    <Resource Include="Resources\PrevLight.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\AudioFileLight.png" />
+    <Resource Include="Resources\DeleteTrashLight.png" />
+    <Resource Include="Resources\MinusLight.png" />
+    <Resource Include="Resources\MuteLight.png" />
+    <Resource Include="Resources\NoRepeatLight.png" />
+    <Resource Include="Resources\PauseLight.png" />
+    <Resource Include="Resources\PlusLight.png" />
+    <Resource Include="Resources\RepeatLight.png" />
+    <Resource Include="Resources\SaveAsLight.png" />
+    <Resource Include="Resources\VolumeUpLight.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\EQLight.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

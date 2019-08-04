@@ -1,0 +1,62 @@
+﻿<Window x:Class="YL_Player.DeskBand"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="YL Player" Height="38" Width="300" ResizeMode="NoResize" ShowInTaskbar="False" Topmost="True" WindowStyle="None" Deactivated="Window_Deactivated_1" Closing="Window_Closing_1" LostFocus="Window_LostFocus_1" AllowsTransparency="True" Background="{x:Null}" BorderThickness="0" Icon="Resources/Icon.ico" Activated="Window_Activated_1" Loaded="Window_Loaded_1">
+
+    <Grid Background="#01000000" PreviewMouseLeftButtonDown="Move_PreviewMouseLeftButtonDown" PreviewMouseLeftButtonUp="Move_PreviewMouseLeftButtonUp" MouseMove="Move_MouseMove" Opacity="0.8">
+        <Canvas Name="myGrid" HorizontalAlignment="Left" Height="38" VerticalAlignment="Top" Width="300"/>
+        <Image Name="img" Height="32" Width="32" Margin="0,0,265,0" Cursor="Hand" PreviewMouseLeftButtonUp="img_PreviewMouseLeftButtonUp"/>
+        <Label Name="mRDS" HorizontalAlignment="Left" VerticalAlignment="Top" Width="262" Height="27" Margin="38,-4,0,0" Foreground="White" FontSize="14" FontFamily="/YL Player;component/Resources/#Exo 2 Light Expanded">
+            <Label.Effect>
+                <DropShadowEffect ShadowDepth="0"/>
+            </Label.Effect>
+        </Label>
+        <Image Name="Prev" Source="Resources/Prev32.png" Height="16" Width="16" Margin="44,18,238,2" Cursor="Hand" PreviewMouseLeftButtonUp="Prev_PreviewMouseLeftButtonUp">
+            <Image.Effect>
+                <DropShadowEffect ShadowDepth="0"/>
+            </Image.Effect>
+        </Image>
+        <Image Name="Play" Source="Resources/Play32.png" Height="16" Width="16" Margin="66,18,216,2" Cursor="Hand" PreviewMouseLeftButtonUp="Play_PreviewMouseLeftButtonUp">
+            <Image.Effect>
+                <DropShadowEffect ShadowDepth="0"/>
+            </Image.Effect>
+        </Image>
+        <Image Name="Pause" Source="Resources/Pause32.png" Height="16" Width="16" Margin="86,18,196,2" Cursor="Hand" PreviewMouseLeftButtonUp="Pause_PreviewMouseLeftButtonUp">
+            <Image.Effect>
+                <DropShadowEffect ShadowDepth="0"/>
+            </Image.Effect>
+        </Image>
+        <Image Name="Next" Source="Resources/Next32.png" Height="16" Width="16" Margin="108,18,174,2" Cursor="Hand" PreviewMouseLeftButtonUp="Next_PreviewMouseLeftButtonUp">
+            <Image.Effect>
+                <DropShadowEffect ShadowDepth="0"/>
+            </Image.Effect>
+        </Image>
+        <Image Name="Hide" Source="Resources/Hide32.png" Height="16" Width="16" Margin="265,18,19,2" Cursor="Hand" PreviewMouseLeftButtonUp="Hide_PreviewMouseLeftButtonUp" >
+            <Image.Effect>
+                <DropShadowEffect ShadowDepth="0"/>
+            </Image.Effect>
+        </Image>
+        <Image Name="Move" Source="Resources/Move32.png" Height="16" Width="16" Margin="284,18,0,2" Cursor="Hand" PreviewMouseLeftButtonUp="Move_PreviewMouseLeftButtonUpSwith" >
+            <Image.Effect>
+                <DropShadowEffect ShadowDepth="0"/>
+            </Image.Effect>
+        </Image>
+        <Label Name="VolL" HorizontalAlignment="Left" VerticalAlignment="Top" Width="48" Height="24" Margin="221,14,0,0" Foreground="White" FontSize="12" RenderTransformOrigin="0.074,0.458" FontFamily="/YL Player;component/Resources/#Exo 2 Light Expanded">
+            <Label.Effect>
+                <DropShadowEffect ShadowDepth="0"/>
+            </Label.Effect>
+        </Label>
+        <Slider x:Name="VolSlider" HorizontalAlignment="Left" Margin="130,15,0,-3" VerticalAlignment="Top" Width="90" Height="26" Value="100" Maximum="100" RenderTransformOrigin="0.5,0.5" SmallChange="1" LargeChange="5" TickFrequency="5" ValueChanged="VolSlider_ValueChanged" MouseEnter="VolSlider_MouseEnter" MouseLeave="VolSlider_MouseLeave">
+            <Slider.Effect>
+                <DropShadowEffect ShadowDepth="0"/>
+            </Slider.Effect>
+            <Slider.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleY="0.5"/>
+                </TransformGroup>
+            </Slider.RenderTransform>
+        </Slider>
+        <Canvas Background="#55FFFFFF" x:Name="posBar" HorizontalAlignment="Left" Height="3" VerticalAlignment="Top" Width="300" PreviewMouseLeftButtonUp="posBar_PreviewMouseLeftButtonUp" Margin="0,35,0,0" Cursor="Hand" Visibility="Hidden"/>
+
+    </Grid>
+</Window>
