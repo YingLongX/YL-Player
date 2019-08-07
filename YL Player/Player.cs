@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Drawing;
 using System.IO;
+using System.Text;
 using Un4seen.Bass;
 using Un4seen.Bass.AddOn.Tags;
-using System.Drawing;
-using System.Windows.Interop;
-using System.Windows;
-using System.Windows.Media.Imaging;
 
 namespace YL_Player
 {
@@ -252,8 +249,7 @@ namespace YL_Player
         /// <summary>
         /// продолжить воспроизведение
         /// </summary>
-        /// <param name="index"></param>
-        public void Continue(int index)
+        public void Continue()
         {
             pause = false;
             Bass.BASS_ChannelPlay(stream, false);
@@ -276,10 +272,9 @@ namespace YL_Player
         /// <summary>
         /// Воспроизвести/пауза
         /// </summary>
-        /// <param name="index"></param>
-        public void PlayPause(int index)
+        public void PlayPause()
         {
-            if (pause) Continue(index);
+            if (pause) Continue();
             else Pause();
         }
         /// <summary>
@@ -332,12 +327,14 @@ namespace YL_Player
                     if (files[i].EndsWith(".m3u") || files[i].EndsWith(".m3u8")) GetPlayListFromFile_m3u(files[i]);
                     else//иначе это файл
                     {
-                        TagLib.File tagFile = TagLib.File.Create(files[i]); //читаем тег из файла
-                        PlayList.Add(new Audio()); //выделяем память под новый элемент
-                        PlayList[PlayList.Count - 1].path = files[i];//путь к файлу
-                        PlayList[PlayList.Count - 1].artist = tagFile.Tag.FirstAlbumArtist;//артист
-                        PlayList[PlayList.Count - 1].title = tagFile.Tag.Title;//название
-                        PlayList[PlayList.Count - 1].duration = (int)tagFile.Properties.Duration.TotalSeconds;
+                        using (TagLib.File tagFile = TagLib.File.Create(files[i])) //читаем тег из файла
+                        {
+                            PlayList.Add(new Audio()); //выделяем память под новый элемент
+                            PlayList[PlayList.Count - 1].path = files[i];//путь к файлу
+                            PlayList[PlayList.Count - 1].artist = tagFile.Tag.FirstAlbumArtist;//артист
+                            PlayList[PlayList.Count - 1].title = tagFile.Tag.Title;//название
+                            PlayList[PlayList.Count - 1].duration = (int)tagFile.Properties.Duration.TotalSeconds;
+                        }
                         PlayList[PlayList.Count - 1].image = GetAlbumArt(files[i]);
                     }
                 }
@@ -414,8 +411,10 @@ namespace YL_Player
                                 {
                                     case 2:
                                         PlayList[PlayList.Count - 1].title = info[1];//название
-                                        TagLib.File tagFile = TagLib.File.Create(PlayList[PlayList.Count - 1].path); //читаем тег из файла
-                                        PlayList[PlayList.Count - 1].duration = (int)tagFile.Properties.Duration.TotalSeconds;
+                                        using (TagLib.File tagFile = TagLib.File.Create(PlayList[PlayList.Count - 1].path)) //читаем тег из файла
+                                        {
+                                            PlayList[PlayList.Count - 1].duration = (int)tagFile.Properties.Duration.TotalSeconds;
+                                        }
                                         break;
                                     case 3:
                                         PlayList[PlayList.Count - 1].duration = Convert.ToInt32(info[1]);
@@ -438,8 +437,10 @@ namespace YL_Player
                                 PlayList.Add(new Audio());
                                 PlayList[PlayList.Count - 1].path = lines[i + 1];//путь к файлу
                                 PlayList[PlayList.Count - 1].title = lines[i].Substring(2);
-                                TagLib.File tagFile = TagLib.File.Create(PlayList[PlayList.Count - 1].path); //читаем тег из файла
-                                PlayList[PlayList.Count - 1].duration = (int)tagFile.Properties.Duration.TotalSeconds;
+                                using (TagLib.File tagFile = TagLib.File.Create(PlayList[PlayList.Count - 1].path)) //читаем тег из файла
+                                {
+                                    PlayList[PlayList.Count - 1].duration = (int)tagFile.Properties.Duration.TotalSeconds;
+                                }
                                 PlayList[PlayList.Count - 1].image = GetAlbumArt(PlayList[PlayList.Count - 1].path);
                             }
                         }

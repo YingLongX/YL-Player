@@ -1,22 +1,21 @@
 ﻿using Microsoft.Win32;
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Forms;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
-using System.Windows.Shapes;
-using System.Windows.Forms;
-using WinForms = System.Windows.Forms;
-using System.IO;
-using System.Collections.Generic;
-using System.Windows.Interop;
 using System.Windows.Media.Imaging;
-using System.Diagnostics;
-using System.Reflection;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Runtime.InteropServices;
+using WinForms = System.Windows.Forms;
 
 namespace YL_Player
 {
@@ -30,21 +29,22 @@ namespace YL_Player
 
     public partial class MainWindow : Window
     {
-        private static MainWindow mw; //текущий класс
-        public DeskBand DeskBandPanel;
-        public NotifyIcon nIcon = new NotifyIcon();
+        private static MainWindow mw;               //текущий класс (передается в другие окна, чтобы получить доступ к полям и методам основного класса)
+        public DeskBand DeskBandPanel;              //виджет для панели задач
+        public NotifyIcon nIcon = new NotifyIcon(); //иконка в трее
         public PresentationSource source;
         public double dpiX, dpiY, PixelSize;
-        public int DBShow, isVisual;
+        public int DBShow, isVisual, nIconClickCount;
         public Color VColor;
         public Player player = new Player(NextSong, ShowDuration, OnFileNotFound);   //инициализируем плеер
-        public bool isPlayOnStart = false;     //играть при запуске программы (если плейлист не пуст)
-        public bool isPlayListLoading = false; //загрузка плейлиста
-        public bool isPlayFromStart = true;    //играть трек с начала при нажатии на кнопку PlayPause
-        public bool repeat = false; //повторять оду и ту же песню
-        public bool tick = false; //флаг равен true во время выполнения функции ShowDuration
-        public float muteVol = 100;//переменная, в которой запоминается громкость до нажатия кнопки mute
-        public Timer SpectrumTimer = new Timer();
+        public bool isPlayOnStart = false;      //играть при запуске программы (если плейлист не пуст)
+        public bool isPlayListLoading = false;  //загрузка плейлиста
+        public bool isPlayFromStart = true;     //играть трек с начала при нажатии на кнопку PlayPause
+        public bool repeat = false;             //повторять оду и ту же песню
+        public bool tick = false;               //флаг равен true во время выполнения функции ShowDuration
+        public float muteVol = 100;             //переменная, в которой запоминается громкость до нажатия кнопки mute
+        public Timer SpectrumTimer = new Timer();   //таймер визуализации
+        public Timer nIconClickTimer = new Timer(); //таймер клика по трею (1 клик в течении 250 мс - размернуть окно | 2 клика в течении 250 мс - Play/Pause)
         public ObservableCollection<ListType> PlayList = new ObservableCollection<ListType>();
         public int selectedIndex = -1;
         public bool restoringOfSelectedIndex = false;
@@ -60,8 +60,14 @@ namespace YL_Player
             nIcon.Icon = System.Drawing.Icon.FromHandle(Properties.Resources.Icon.ToBitmap().GetHicon());
             nIcon.Text = "YL Player";
             nIcon.MouseClick += new WinForms.MouseEventHandler(TrayIcon_MouseClick);
-            nIcon.MouseDoubleClick += new WinForms.MouseEventHandler(TrayIcon_MouseDoubleClick);
-            
+            nIcon.MouseUp += new WinForms.MouseEventHandler(TrayIcon_MouseUp);
+
+            nIconClickCount = 0;
+
+            nIconClickTimer.Interval = 250;
+            nIconClickTimer.Tick += NIconClickTimer_Tick;
+            nIconClickTimer.Enabled = true;
+
             SpectrumTimer.Interval = 75;
             SpectrumTimer.Tick += new EventHandler(SpectrumTimer_Tick);
             SpectrumTimer.Enabled = true;
@@ -78,42 +84,63 @@ namespace YL_Player
             isLoading = false;
         }
 
+        private void NIconClickTimer_Tick(object sender, EventArgs e)
+        {
+            switch (nIconClickCount)
+            {
+                default: nIconClickCount = 0; break;
+                case 1:
+                    nIconClickCount = 0;
+                    /*
+                    this.Top = 0;
+                    this.Left = 0;
+                    this.Top = (double)WinForms.Cursor.Position.Y / (dpiY * (1.0 / 96.0)) - (double)490;
+                    this.Left = (double)WinForms.Cursor.Position.X / (dpiX * (1.0 / 96.0)) - (double)200;*/
+                    if (this.WindowState == WindowState.Minimized)
+                        this.WindowState = WindowState.Normal;
+
+                    this.Show();
+                    this.Activate();
+                    /*if (pause == 0)
+                    {
+                        RDS.Content = " ";
+                        DeskBandPanel.RDS_UPD(" ");
+                        DoMeta();//Обновление мета-тега при открытии меню
+                    }
+                    else
+                    {
+                        Search_RDS = RDS_1;
+                        if (RDS_1.Length > 32) L2 = RDS_1 + "             ";
+                        else L2 = RDS_1;
+                        RDS.Content = RDS_1;
+                        DeskBandPanel.RDS_UPD(RDS_1);
+                    }*/
+                    break;
+                case 2:
+                    nIconClickCount = 0;
+                    PlayPause();
+                    break;
+            }
+            nIconClickTimer.Stop();
+        }
+
+        //Клик по трею
+        private void TrayIcon_MouseUp(object sender, WinForms.MouseEventArgs e)
+        {
+            if (e.Button == WinForms.MouseButtons.Left) 
+            {
+                nIconClickCount++;
+                nIconClickTimer.Start();
+            }
+        }
+
+        //Клик по трею средней кнопкой
         private void TrayIcon_MouseClick(object sender, WinForms.MouseEventArgs e)
         {
-            if (e.Button == WinForms.MouseButtons.Right)
-            {/*
-                this.Top = 0;
-                this.Left = 0;
-                this.Top = (double)WinForms.Cursor.Position.Y / (dpiY * (1.0 / 96.0)) - (double)490;
-                this.Left = (double)WinForms.Cursor.Position.X / (dpiX * (1.0 / 96.0)) - (double)200;*/
-                if (this.WindowState == WindowState.Minimized)
-                    this.WindowState = WindowState.Normal;
-                    
-                this.Show();
-                this.Activate();
-                /*if (pause == 0)
-                {
-                    RDS.Content = " ";
-                    DeskBandPanel.RDS_UPD(" ");
-                    DoMeta();//Обновление мета-тега при открытии меню
-                }
-                else
-                {
-                    Search_RDS = RDS_1;
-                    if (RDS_1.Length > 32) L2 = RDS_1 + "             ";
-                    else L2 = RDS_1;
-                    RDS.Content = RDS_1;
-                    DeskBandPanel.RDS_UPD(RDS_1);
-                }*/
-            }
             if (e.Button == WinForms.MouseButtons.Middle)
             {
                 this.Close();
             }
-        } //Клик по трею
-        private void TrayIcon_MouseDoubleClick(object sender, WinForms.MouseEventArgs e)
-        {
-            if (e.Button == WinForms.MouseButtons.Left) PlayPause();
         }
 
         //Событие - сменился тест в поисковой строке
@@ -146,11 +173,11 @@ namespace YL_Player
             this.Resources["WindowStatusForegroundInactive"] = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FFFFFFFF"));
             //
             DBShow = 1;
-            DeskBandPanel.Left = System.Windows.SystemParameters.PrimaryScreenWidth / 2 - 150;
-            DeskBandPanel.Top = System.Windows.SystemParameters.PrimaryScreenHeight - 38;
+            DeskBandPanel.Left = SystemParameters.PrimaryScreenWidth / 2 - 150;
+            DeskBandPanel.Top = SystemParameters.PrimaryScreenHeight - 38;
             VColor = Color.FromArgb(255, 255, 0, 0);
             //
-            int SelectedIndex = -1, Pos = -1;
+            int SelectedIndex = -1;
 
             RegistryKey rk = null;
             rk = Registry.CurrentUser.OpenSubKey("Software");
@@ -359,14 +386,14 @@ namespace YL_Player
                                       Int32Rect.Empty,
                                       BitmapSizeOptions.FromEmptyOptions());
                 AlbumArt.Background = new ImageBrush(bitmapSource);
-                AlbumArt.Visibility = System.Windows.Visibility.Visible;
+                AlbumArt.Visibility = Visibility.Visible;
                 DeskBandPanel.img.Source = bitmapSource;
                 
             }
             else
             {
                 DeskBandPanel.img.Source = DefaultAlbumArtSmall.Source;
-                AlbumArt.Visibility = System.Windows.Visibility.Hidden;   
+                AlbumArt.Visibility = Visibility.Hidden;   
             }
         }
         /// <summary>
@@ -379,15 +406,15 @@ namespace YL_Player
             if (PlayListBox.SelectedIndex >= 0)
                 UpdateAlbumArt(player.PlayList[(PlayListBox.Items[PlayListBox.SelectedIndex] as ListType).index].image);
             //меняем кнопки плей и пауза
-            if (PlayBut.Visibility == System.Windows.Visibility.Hidden || PlayListBox.SelectedIndex == -1)
+            if (PlayBut.Visibility == Visibility.Hidden || PlayListBox.SelectedIndex == -1)
             {
-                PlayBut.Visibility = System.Windows.Visibility.Visible;
-                PauseBut.Visibility = System.Windows.Visibility.Hidden;
+                PlayBut.Visibility = Visibility.Visible;
+                PauseBut.Visibility = Visibility.Hidden;
             }
             else
             {
-                PlayBut.Visibility = System.Windows.Visibility.Hidden;
-                PauseBut.Visibility = System.Windows.Visibility.Visible;
+                PlayBut.Visibility = Visibility.Hidden;
+                PauseBut.Visibility = Visibility.Visible;
             }
             if (isPlayFromStart || isPlayListLoading)//если играть при старте программы
             {
@@ -399,7 +426,7 @@ namespace YL_Player
             }
             CusomSlider.Maximum = player.PlayList[PlayListBox.SelectedIndex].duration; //меняем диаппазон ползунка
             Dur.Content = SecToString(player.PlayList[PlayListBox.SelectedIndex].duration);//указываем длительность трека
-            player.PlayPause((PlayListBox.Items[PlayListBox.SelectedIndex] as ListType).index);//воспроизвести или поставить на паузу текущий трек
+            player.PlayPause();//воспроизвести или поставить на паузу текущий трек
         }
         /// <summary>
         /// Нажатие кнопки PlayPause
@@ -480,8 +507,8 @@ namespace YL_Player
                     CusomSlider.Maximum = player.PlayList[selectedIndex].duration;
                     CusomSlider.Value = 0;
                     player.Play((PlayList[selectedIndex] as ListType).index);//воспроизвести выбранный трек
-                    PlayBut.Visibility = System.Windows.Visibility.Hidden;
-                    PauseBut.Visibility = System.Windows.Visibility.Visible;
+                    PlayBut.Visibility = Visibility.Hidden;
+                    PauseBut.Visibility = Visibility.Visible;
                     isPlayFromStart = false;
                 }
             }
@@ -508,7 +535,7 @@ namespace YL_Player
         private void Add_MouseUp(object sender, MouseButtonEventArgs e)
         {
             ((BlurEffect)GridMain.Effect).Radius = 15;
-            GridWait.Visibility = System.Windows.Visibility.Visible;
+            GridWait.Visibility = Visibility.Visible;
             LoadingText.Content = "Загрузка файлов";
             Microsoft.Win32.OpenFileDialog myDialog = new Microsoft.Win32.OpenFileDialog();
             myDialog.Filter = "Audio File or Playlist (*.mp3;*.wav;*.ogg;*.flac;*.m3u;*.m3u8)|*.mp3;*.wav;*.ogg;*.flac;*.m3u;*.m3u8;";
@@ -550,7 +577,7 @@ namespace YL_Player
                 LoadPlayList();//обновляем плейлист интерфейса
                 player.SavePlayListToFile_m3u8("default.m3u8");//сохраняем плейлист по умолчанию
             }
-            GridWait.Visibility = System.Windows.Visibility.Hidden;
+            GridWait.Visibility = Visibility.Hidden;
             ((BlurEffect)GridMain.Effect).Radius = 0;
         }
         /// <summary>
@@ -561,7 +588,7 @@ namespace YL_Player
         private void SaveBut_MouseUp(object sender, MouseButtonEventArgs e)
         {
             ((BlurEffect)GridMain.Effect).Radius = 15;
-            GridWait.Visibility = System.Windows.Visibility.Visible;
+            GridWait.Visibility = Visibility.Visible;
             LoadingText.Content = "Сохранение плейлиста";
             Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
             dlg.FileName = "Playlist"; // Default file name
@@ -569,7 +596,7 @@ namespace YL_Player
             dlg.Filter = "Playlists (.m3u8)|*.m3u8";
             if (dlg.ShowDialog() == true)
                 player.SavePlayListToFile_m3u8(dlg.FileName);//сохраняем плейлист как
-            GridWait.Visibility = System.Windows.Visibility.Hidden;
+            GridWait.Visibility = Visibility.Hidden;
             ((BlurEffect)GridMain.Effect).Radius = 0;
         }
         /// <summary>
@@ -641,7 +668,7 @@ namespace YL_Player
 
             player.SavePlayListToFile_m3u8("default.m3u8");//сохраняем плейлист по умолчанию
             player.Stop();//остановить воспроизведение
-            this.nIcon.Visible = false;
+            nIcon.Visible = false;
             DeskBandPanel.Close();
         }
         public string ColorToHex(Color color)
@@ -660,7 +687,7 @@ namespace YL_Player
         {
             if (index >= 0 && index < player.PlayList.Count)
             {
-                AlbumArt.Visibility = System.Windows.Visibility.Hidden;
+                AlbumArt.Visibility = Visibility.Hidden;
                 player.Stop();
                 player.PlayList.RemoveAt(index);
                 PlayList.RemoveAt(index);
@@ -699,8 +726,8 @@ namespace YL_Player
                         CusomSlider.Value = 0;
                         if (isLoading && !isPlayOnStart) return;
                         player.Play((PlayListBox.Items[PlayListBox.SelectedIndex] as ListType).index);//воспроизвести выбранный трек
-                        PlayBut.Visibility = System.Windows.Visibility.Hidden;
-                        PauseBut.Visibility = System.Windows.Visibility.Visible;
+                        PlayBut.Visibility = Visibility.Hidden;
+                        PauseBut.Visibility = Visibility.Visible;
                         isPlayFromStart = false;
                     }
                 }
@@ -716,14 +743,14 @@ namespace YL_Player
             if (!repeat)
             {
                 repeat = true;
-                NoRepeatBut.Visibility = System.Windows.Visibility.Hidden;
-                RepeatBut.Visibility = System.Windows.Visibility.Visible;
+                NoRepeatBut.Visibility = Visibility.Hidden;
+                RepeatBut.Visibility = Visibility.Visible;
             }
             else
             {
                 repeat = false;
-                NoRepeatBut.Visibility = System.Windows.Visibility.Visible;
-                RepeatBut.Visibility = System.Windows.Visibility.Hidden;
+                NoRepeatBut.Visibility = Visibility.Visible;
+                RepeatBut.Visibility = Visibility.Hidden;
             }
         }
         /// <summary>
@@ -734,9 +761,9 @@ namespace YL_Player
         private void ClearBut_MouseUp(object sender, MouseButtonEventArgs e)
         {
             player.Stop();//останавливаем воспроизведение
-            PlayBut.Visibility = System.Windows.Visibility.Visible;
-            PauseBut.Visibility = System.Windows.Visibility.Hidden;
-            AlbumArt.Visibility = System.Windows.Visibility.Hidden;
+            PlayBut.Visibility = Visibility.Visible;
+            PauseBut.Visibility = Visibility.Hidden;
+            AlbumArt.Visibility = Visibility.Hidden;
             TrackName.Content = "";
             CurDur.Content = SecToString(0);
             Dur.Content = SecToString(0);
@@ -785,15 +812,15 @@ namespace YL_Player
         {
             if (player.volume != 0)//если громкость > 0  то заглушить звук
             {
-                MuteBut.Visibility = System.Windows.Visibility.Hidden;
-                MuteButOn.Visibility = System.Windows.Visibility.Visible;
+                MuteBut.Visibility = Visibility.Hidden;
+                MuteButOn.Visibility = Visibility.Visible;
                 muteVol = player.volume;
                 CusomVolumeSlider.Value = 0;
             }
             else//иначе вернуть звук обратно
             {
-                MuteBut.Visibility = System.Windows.Visibility.Visible;
-                MuteButOn.Visibility = System.Windows.Visibility.Hidden;
+                MuteBut.Visibility = Visibility.Visible;
+                MuteButOn.Visibility = Visibility.Hidden;
                 CusomVolumeSlider.Value = muteVol * 100;
             }
         }
@@ -836,14 +863,14 @@ namespace YL_Player
 
         private void CloseEQ_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            GridEQ.Visibility = System.Windows.Visibility.Hidden;
+            GridEQ.Visibility = Visibility.Hidden;
             ((BlurEffect)GridMain.Effect).Radius = 0;
         }
 
         private void OpenEQBut_MouseUp(object sender, MouseButtonEventArgs e)
         {
             ((BlurEffect)GridMain.Effect).Radius = 15;
-            GridEQ.Visibility = System.Windows.Visibility.Visible;
+            GridEQ.Visibility = Visibility.Visible;
         }
 
         private void BalanceSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -884,7 +911,7 @@ namespace YL_Player
         private void PlayListBox_Drop(object sender, System.Windows.DragEventArgs e)
         {
             ((BlurEffect)GridMain.Effect).Radius = 15;
-            GridWait.Visibility = System.Windows.Visibility.Visible;
+            GridWait.Visibility = Visibility.Visible;
 
             //получаем список путей файлов и папок дропнутых в программу
             string[] FileDropList = e.Data.GetData(System.Windows.DataFormats.FileDrop) as string[];
@@ -922,7 +949,7 @@ namespace YL_Player
             LoadPlayList();//обновляем плейлист интерфейса
             player.SavePlayListToFile_m3u8("default.m3u8");//сохраняем плейлист по умолчанию
 
-            GridWait.Visibility = System.Windows.Visibility.Hidden;
+            GridWait.Visibility = Visibility.Hidden;
             ((BlurEffect)GridMain.Effect).Radius = 0;
         }
 
@@ -1015,7 +1042,7 @@ namespace YL_Player
 
         private void Image_PreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
-            MainMenu.Visibility = System.Windows.Visibility.Visible;
+            MainMenu.Visibility = Visibility.Visible;
         }
 
         private void Window_MouseUp(object sender, MouseButtonEventArgs e)
@@ -1066,7 +1093,5 @@ namespace YL_Player
             SouthWest = 7
         }
         #endregion
-
-        
     }
 }

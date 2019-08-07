@@ -89,8 +89,7 @@ namespace YL_Player
             canvas.Children.Clear();
             
             RGB color = new RGB(255, 0, 0);
-
-            int bar = 0, y = 0, b0 = 0;
+            int bar = 0, b0 = 0;
             float peak;
             double k = 10.0 / (_SpectrParams.LinesCount - 1);
             for (int x = 0; x < _SpectrParams.LinesCount; ++x)
@@ -102,7 +101,7 @@ namespace YL_Player
                 for (; b0 < b1; ++b0)
                     if (peak < FFTdata[1 + b0])
                         peak = FFTdata[1 + b0];
-                y = (int)(Math.Sqrt(peak) * 765 - 4);//765 = 3 * 255
+                int y = (int)(Math.Sqrt(peak) * 765 - 4);
                 if (y > 255) y = 255;
                 else if (y < 0) y = 0;
 

@@ -1,23 +1,12 @@
 ﻿using System;
-using System.Resources;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Runtime.InteropServices; //для DllImport
 using System.Windows;
-using System.Windows.Forms;
-using WinForms = System.Windows.Forms;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Microsoft.Win32;
-using Un4seen.Bass;
-using System.Runtime.InteropServices; //для DllImport
+using WinForms = System.Windows.Forms;
 
 
 namespace YL_Player
@@ -114,7 +103,7 @@ namespace YL_Player
             mw.Next();
         }
 
-        private void img_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void Img_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             //mw.Top = 0;
             //mw.Left = 0;
@@ -206,7 +195,7 @@ namespace YL_Player
             timer2.Enabled = true;
         }
 
-        private void posBar_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void PosBar_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             Point position = Mouse.GetPosition(this);
             mw.SetCurrentPos((int)position.X);

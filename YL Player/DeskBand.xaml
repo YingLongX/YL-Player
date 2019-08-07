@@ -5,7 +5,7 @@
 
     <Grid Background="#01000000" PreviewMouseLeftButtonDown="Move_PreviewMouseLeftButtonDown" PreviewMouseLeftButtonUp="Move_PreviewMouseLeftButtonUp" MouseMove="Move_MouseMove" Opacity="0.8">
         <Canvas Name="myGrid" HorizontalAlignment="Left" Height="38" VerticalAlignment="Top" Width="300"/>
-        <Image Name="img" Height="32" Width="32" Margin="0,0,265,0" Cursor="Hand" PreviewMouseLeftButtonUp="img_PreviewMouseLeftButtonUp"/>
+        <Image Name="img" Height="32" Width="32" Margin="0,0,265,0" Cursor="Hand" PreviewMouseLeftButtonUp="Img_PreviewMouseLeftButtonUp"/>
         <Label Name="mRDS" HorizontalAlignment="Left" VerticalAlignment="Top" Width="262" Height="27" Margin="38,-4,0,0" Foreground="White" FontSize="14" FontFamily="/YL Player;component/Resources/#Exo 2 Light Expanded">
             <Label.Effect>
                 <DropShadowEffect ShadowDepth="0"/>
@@ -56,7 +56,7 @@
                 </TransformGroup>
             </Slider.RenderTransform>
         </Slider>
-        <Canvas Background="#55FFFFFF" x:Name="posBar" HorizontalAlignment="Left" Height="3" VerticalAlignment="Top" Width="300" PreviewMouseLeftButtonUp="posBar_PreviewMouseLeftButtonUp" Margin="0,35,0,0" Cursor="Hand" Visibility="Hidden"/>
+        <Canvas Background="#55FFFFFF" x:Name="posBar" HorizontalAlignment="Left" Height="3" VerticalAlignment="Top" Width="300" PreviewMouseLeftButtonUp="PosBar_PreviewMouseLeftButtonUp" Margin="0,35,0,0" Cursor="Hand" Visibility="Hidden"/>
 
     </Grid>
 </Window>

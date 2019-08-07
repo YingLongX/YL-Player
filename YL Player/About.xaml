@@ -3,9 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:YL_Player"
         mc:Ignorable="d"
-        Title="О программе"
+        Title="About"
         Height="308"
         Width="525"
         Icon="Resources/InfoDark.png"
@@ -13,17 +12,19 @@
         ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen"
         Opacity="0.9"
-        Background="#FFDCDEDE"
+        Background="#EE000000"
         Style="{StaticResource AboutWindowStyle}"
         RenderOptions.ClearTypeHint="Enabled">
     <Grid>
         <Image Source="Resources/Icon.ico" Width="64" Height="64" Margin="10,10,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"></Image>
         <Label Content="YL Player" FontSize="36" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="79,10,0,0" Foreground="{StaticResource TitleBarBackgroundBrush}" ></Label>
-        <Label Name="Version" Content="v.2.0" FontSize="16" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="230,10,0,0" Foreground="{StaticResource TitleBarBackgroundBrush}"></Label>
-        <Label Content="Программа для воспроизведения аудио файлов и плейлистов форматов:" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,81,0,0" Foreground="{StaticResource TitleBarBackgroundBrush}"></Label>
-        <Label Content="flac, mp3, ogg, wav, m3u, m3u8, а также потокового аудио (интернет-радио)" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,110,0,0" Foreground="{StaticResource TitleBarBackgroundBrush}"></Label>
-        <Label Content="Разработчик:" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,163,0,0" Foreground="{StaticResource TitleBarBackgroundBrush}"></Label>
-        <Label Name="Author" Content="YingLong" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,192,0,0" Foreground="{StaticResource TitleBarBackgroundBrush}"></Label>
-        <Label Content="© 2018" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,221,0,0" Foreground="{StaticResource TitleBarBackgroundBrush}"/>
+        <Label Name="Version" Content="v.2.0" FontSize="16" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="237,10,0,0" Foreground="{StaticResource TitleBarBackgroundBrush}"></Label>
+        <Label Content="Audio player that supports various formats and streaming audio" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,81,0,0" Foreground="{StaticResource TitleBarBackgroundBrush}"></Label>
+        <Label Content="" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,110,0,0" Foreground="{StaticResource TitleBarBackgroundBrush}"></Label>
+        <!--<Label Content="Программа для воспроизведения аудио файлов и плейлистов форматов:" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,81,0,0" Foreground="{StaticResource TitleBarBackgroundBrush}"></Label>
+        <Label Content="flac, mp3, ogg, wav, m3u, m3u8, а также потокового аудио (интернет-радио)" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,110,0,0" Foreground="{StaticResource TitleBarBackgroundBrush}"></Label>-->
+        <Label Content="Developer:" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,163,0,0" Foreground="{StaticResource TitleBarBackgroundBrush}"></Label>
+        <Label Name="Author" Content="YingLong" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,192,0,0" Foreground="{StaticResource TitleBarBackgroundBrush}" PreviewMouseLeftButtonUp="Author_PreviewMouseLeftButtonUp" Cursor="Hand"></Label>
+        <Label Name="Copyright" Content="© 2018 - " FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,221,0,0" Foreground="{StaticResource TitleBarBackgroundBrush}"/>
     </Grid>
 </Window>
