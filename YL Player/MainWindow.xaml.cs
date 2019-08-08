@@ -21,10 +21,10 @@ namespace YL_Player
 {
     public class ListType //класс элемента ListBox
     {
-        public int index { get; set; }//index
-        public String text { get; set; }//название
-        public ImageSource image { get; set; }//изображение
-        public String duration { get; set; }//длительность
+        public int Index { get; set; }//index
+        public string Text { get; set; }//название
+        public ImageSource Image { get; set; }//изображение
+        public string Duration { get; set; }//длительность
     }
 
     public partial class MainWindow : Window
@@ -144,9 +144,9 @@ namespace YL_Player
         }
 
         //Событие - сменился тест в поисковой строке
-        private void txtNameToSearch_TextChanged(object sender, TextChangedEventArgs e)
+        private void TxtNameToSearch_TextChanged(object sender, TextChangedEventArgs e)
         {
-            PlayListBox.ItemsSource = PlayList.Where(x => x.text.ToUpper().Contains(txtNameToSearch.Text.ToUpper()));
+            PlayListBox.ItemsSource = PlayList.Where(x => x.Text.ToUpper().Contains(txtNameToSearch.Text.ToUpper()));
             if (txtNameToSearch.Text == "" && !selectedIndexChanged)
             {
                 restoringOfSelectedIndex = true;
@@ -178,9 +178,7 @@ namespace YL_Player
             VColor = Color.FromArgb(255, 255, 0, 0);
             //
             int SelectedIndex = -1;
-
-            RegistryKey rk = null;
-            rk = Registry.CurrentUser.OpenSubKey("Software");
+            RegistryKey rk = Registry.CurrentUser.OpenSubKey("Software");
             var versionInfo = FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location);
             RegistryKey nk = rk.OpenSubKey(versionInfo.ProductName + "_" + versionInfo.ProductVersion);
             if (rk != null)
@@ -302,23 +300,25 @@ namespace YL_Player
             ListType[] CH_EL = new ListType[player.PlayList.Count];
             for (int i = 0; i < player.PlayList.Count; i++)
             {
-                CH_EL[i] = new ListType();
-                CH_EL[i].index = i;
-                CH_EL[i].text = ((player.PlayList[i].artist != null && player.PlayList[i].artist.Length > 0) ? player.PlayList[i].artist + " - " : "") +
-                                ((player.PlayList[i].title != null && player.PlayList[i].title.Length > 0) ? player.PlayList[i].title :
-                                player.PlayList[i].path.Substring(player.PlayList[i].path.LastIndexOf('\\') + 1, player.PlayList[i].path.Length - player.PlayList[i].path.LastIndexOf('\\') - 5));
-                if (player.PlayList[i].image != null)
+                CH_EL[i] = new ListType
                 {
-                    var bitmap = new System.Drawing.Bitmap(player.PlayList[i].image);
+                    Index = i,
+                    Text = ((player.PlayList[i].Artist != null && player.PlayList[i].Artist.Length > 0) ? player.PlayList[i].Artist + " - " : "") +
+                            ((player.PlayList[i].Title != null && player.PlayList[i].Title.Length > 0) ? player.PlayList[i].Title :
+                            player.PlayList[i].Path.Substring(player.PlayList[i].Path.LastIndexOf('\\') + 1, player.PlayList[i].Path.Length - player.PlayList[i].Path.LastIndexOf('\\') - 5))
+                };
+                if (player.PlayList[i].Image != null)
+                {
+                    var bitmap = new System.Drawing.Bitmap(player.PlayList[i].Image);
                     var bitmapSource = Imaging.CreateBitmapSourceFromHBitmap(bitmap.GetHbitmap(),
                                           IntPtr.Zero,
                                           Int32Rect.Empty,
                                           BitmapSizeOptions.FromEmptyOptions());
-                    CH_EL[i].image = bitmapSource;
+                    CH_EL[i].Image = bitmapSource;
                 }
                 else
-                    CH_EL[i].image = DefaultAlbumArtSmall.Source;
-                CH_EL[i].duration = SecToString(player.PlayList[i].duration);
+                    CH_EL[i].Image = DefaultAlbumArtSmall.Source;
+                CH_EL[i].Duration = SecToString(player.PlayList[i].Duration);
             }
             for (int i = 0; i < player.PlayList.Count; i++)
                 PlayList.Add(CH_EL[i]);//PlayListBox.Items.Add(CH_EL[i]);
@@ -404,7 +404,7 @@ namespace YL_Player
             if (player.PlayList.Count == 0 || PlayListBox.SelectedIndex < 0) return;
 
             if (PlayListBox.SelectedIndex >= 0)
-                UpdateAlbumArt(player.PlayList[(PlayListBox.Items[PlayListBox.SelectedIndex] as ListType).index].image);
+                UpdateAlbumArt(player.PlayList[(PlayListBox.Items[PlayListBox.SelectedIndex] as ListType).Index].Image);
             //меняем кнопки плей и пауза
             if (PlayBut.Visibility == Visibility.Hidden || PlayListBox.SelectedIndex == -1)
             {
@@ -418,14 +418,14 @@ namespace YL_Player
             }
             if (isPlayFromStart || isPlayListLoading)//если играть при старте программы
             {
-                CusomSlider.Maximum = player.PlayList[PlayListBox.SelectedIndex].duration;//меняем диаппазон ползунка
-                Dur.Content = SecToString(player.PlayList[PlayListBox.SelectedIndex].duration);//указываем длительность трека
-                player.Play((PlayListBox.Items[PlayListBox.SelectedIndex] as ListType).index);//воспроизвести
+                CusomSlider.Maximum = player.PlayList[PlayListBox.SelectedIndex].Duration;//меняем диаппазон ползунка
+                Dur.Content = SecToString(player.PlayList[PlayListBox.SelectedIndex].Duration);//указываем длительность трека
+                player.Play((PlayListBox.Items[PlayListBox.SelectedIndex] as ListType).Index);//воспроизвести
                 isPlayFromStart = false;//отключаем флаг
                 return;
             }
-            CusomSlider.Maximum = player.PlayList[PlayListBox.SelectedIndex].duration; //меняем диаппазон ползунка
-            Dur.Content = SecToString(player.PlayList[PlayListBox.SelectedIndex].duration);//указываем длительность трека
+            CusomSlider.Maximum = player.PlayList[PlayListBox.SelectedIndex].Duration; //меняем диаппазон ползунка
+            Dur.Content = SecToString(player.PlayList[PlayListBox.SelectedIndex].Duration);//указываем длительность трека
             player.PlayPause();//воспроизвести или поставить на паузу текущий трек
         }
         /// <summary>
@@ -441,8 +441,8 @@ namespace YL_Player
         {
             if (player.PlayList.Count > 0)
             {
-                if ((PlayList[selectedIndex] as ListType).index < PlayList.Count - 1)
-                    selectedIndex = (PlayList[selectedIndex] as ListType).index + 1;
+                if ((PlayList[selectedIndex] as ListType).Index < PlayList.Count - 1)
+                    selectedIndex = (PlayList[selectedIndex] as ListType).Index + 1;
                 else
                     selectedIndex = 0;
                 selectedIndexChanged = true;
@@ -451,17 +451,17 @@ namespace YL_Player
                     restoringOfSelectedIndex = true;
                     PlayListBox.SelectedIndex = selectedIndex;
                 }
-                UpdateAlbumArt(player.PlayList[(PlayList[selectedIndex] as ListType).index].image);
-                Dur.Content = SecToString(player.PlayList[selectedIndex].duration);
-                TrackName.Content = ((ListType)PlayList[selectedIndex]).text;
-                DeskBandPanel.RDS_UPD(((ListType)PlayList[selectedIndex]).text);
+                UpdateAlbumArt(player.PlayList[(PlayList[selectedIndex] as ListType).Index].Image);
+                Dur.Content = SecToString(player.PlayList[selectedIndex].Duration);
+                TrackName.Content = ((ListType)PlayList[selectedIndex]).Text;
+                DeskBandPanel.RDS_UPD(((ListType)PlayList[selectedIndex]).Text);
                 if (!isPlayOnStart && isPlayListLoading)//если не играть при запуске программы то ничего не воспроизводим
                     isPlayListLoading = false;
                 else
                 {
-                    CusomSlider.Maximum = player.PlayList[selectedIndex].duration;
+                    CusomSlider.Maximum = player.PlayList[selectedIndex].Duration;
                     CusomSlider.Value = 0;
-                    player.Play((PlayList[selectedIndex] as ListType).index);//воспроизвести выбранный трек
+                    player.Play((PlayList[selectedIndex] as ListType).Index);//воспроизвести выбранный трек
                     PlayBut.Visibility = System.Windows.Visibility.Hidden;
                     PauseBut.Visibility = System.Windows.Visibility.Visible;
                     isPlayFromStart = false;
@@ -486,8 +486,8 @@ namespace YL_Player
         {
             if (player.PlayList.Count > 0)
             {
-                if ((PlayList[selectedIndex] as ListType).index > 0)
-                    selectedIndex = (PlayList[selectedIndex] as ListType).index - 1;
+                if ((PlayList[selectedIndex] as ListType).Index > 0)
+                    selectedIndex = (PlayList[selectedIndex] as ListType).Index - 1;
                 else
                     selectedIndex = PlayList.Count - 1;
                 selectedIndexChanged = true;
@@ -496,17 +496,17 @@ namespace YL_Player
                     restoringOfSelectedIndex = true;
                     PlayListBox.SelectedIndex = selectedIndex;
                 }
-                UpdateAlbumArt(player.PlayList[(PlayList[selectedIndex] as ListType).index].image);
-                Dur.Content = SecToString(player.PlayList[selectedIndex].duration);
-                TrackName.Content = ((ListType)PlayList[selectedIndex]).text;
-                DeskBandPanel.RDS_UPD(((ListType)PlayList[selectedIndex]).text);
+                UpdateAlbumArt(player.PlayList[(PlayList[selectedIndex] as ListType).Index].Image);
+                Dur.Content = SecToString(player.PlayList[selectedIndex].Duration);
+                TrackName.Content = ((ListType)PlayList[selectedIndex]).Text;
+                DeskBandPanel.RDS_UPD(((ListType)PlayList[selectedIndex]).Text);
                 if (!isPlayOnStart && isPlayListLoading)//если не играть при запуске программы то ничего не воспроизводим
                     isPlayListLoading = false;
                 else
                 {
-                    CusomSlider.Maximum = player.PlayList[selectedIndex].duration;
+                    CusomSlider.Maximum = player.PlayList[selectedIndex].Duration;
                     CusomSlider.Value = 0;
-                    player.Play((PlayList[selectedIndex] as ListType).index);//воспроизвести выбранный трек
+                    player.Play((PlayList[selectedIndex] as ListType).Index);//воспроизвести выбранный трек
                     PlayBut.Visibility = Visibility.Hidden;
                     PauseBut.Visibility = Visibility.Visible;
                     isPlayFromStart = false;
@@ -537,10 +537,12 @@ namespace YL_Player
             ((BlurEffect)GridMain.Effect).Radius = 15;
             GridWait.Visibility = Visibility.Visible;
             LoadingText.Content = "Загрузка файлов";
-            Microsoft.Win32.OpenFileDialog myDialog = new Microsoft.Win32.OpenFileDialog();
-            myDialog.Filter = "Audio File or Playlist (*.mp3;*.wav;*.ogg;*.flac;*.m3u;*.m3u8)|*.mp3;*.wav;*.ogg;*.flac;*.m3u;*.m3u8;";
-            myDialog.CheckFileExists = true;
-            myDialog.Multiselect = true;
+            Microsoft.Win32.OpenFileDialog myDialog = new Microsoft.Win32.OpenFileDialog
+            {
+                Filter = "Audio File or Playlist (*.mp3;*.wav;*.ogg;*.flac;*.m3u;*.m3u8)|*.mp3;*.wav;*.ogg;*.flac;*.m3u;*.m3u8;",
+                CheckFileExists = true,
+                Multiselect = true
+            };
             if (myDialog.ShowDialog() == true)//если были выбраны файлы
             {
                 //создаем список для дальнейшей группировки
@@ -590,10 +592,12 @@ namespace YL_Player
             ((BlurEffect)GridMain.Effect).Radius = 15;
             GridWait.Visibility = Visibility.Visible;
             LoadingText.Content = "Сохранение плейлиста";
-            Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
-            dlg.FileName = "Playlist"; // Default file name
-            dlg.DefaultExt = ".m3u8";
-            dlg.Filter = "Playlists (.m3u8)|*.m3u8";
+            Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog
+            {
+                FileName = "Playlist", // Default file name
+                DefaultExt = ".m3u8",
+                Filter = "Playlists (.m3u8)|*.m3u8"
+            };
             if (dlg.ShowDialog() == true)
                 player.SavePlayListToFile_m3u8(dlg.FileName);//сохраняем плейлист как
             GridWait.Visibility = Visibility.Hidden;
@@ -712,20 +716,20 @@ namespace YL_Player
             {
                 if (PlayListBox.SelectedIndex >= 0 && PlayListBox.SelectedIndex < player.PlayList.Count)
                 {
-                    selectedIndex = (PlayListBox.Items[PlayListBox.SelectedIndex] as ListType).index;
+                    selectedIndex = (PlayListBox.Items[PlayListBox.SelectedIndex] as ListType).Index;
                     selectedIndexChanged = true;
-                    UpdateAlbumArt(player.PlayList[(PlayListBox.Items[PlayListBox.SelectedIndex] as ListType).index].image);
-                    Dur.Content = SecToString(player.PlayList[PlayListBox.SelectedIndex].duration);
-                    TrackName.Content = ((ListType)PlayListBox.Items[PlayListBox.SelectedIndex]).text;
-                    DeskBandPanel.RDS_UPD(((ListType)PlayListBox.Items[PlayListBox.SelectedIndex]).text);
+                    UpdateAlbumArt(player.PlayList[(PlayListBox.Items[PlayListBox.SelectedIndex] as ListType).Index].Image);
+                    Dur.Content = SecToString(player.PlayList[PlayListBox.SelectedIndex].Duration);
+                    TrackName.Content = ((ListType)PlayListBox.Items[PlayListBox.SelectedIndex]).Text;
+                    DeskBandPanel.RDS_UPD(((ListType)PlayListBox.Items[PlayListBox.SelectedIndex]).Text);
                     if (!isPlayOnStart && isPlayListLoading)//если не играть при запуске программы то ничего не воспроизводим
                         isPlayListLoading = false;
                     else
                     {
-                        CusomSlider.Maximum = player.PlayList[PlayListBox.SelectedIndex].duration;
+                        CusomSlider.Maximum = player.PlayList[PlayListBox.SelectedIndex].Duration;
                         CusomSlider.Value = 0;
                         if (isLoading && !isPlayOnStart) return;
-                        player.Play((PlayListBox.Items[PlayListBox.SelectedIndex] as ListType).index);//воспроизвести выбранный трек
+                        player.Play((PlayListBox.Items[PlayListBox.SelectedIndex] as ListType).Index);//воспроизвести выбранный трек
                         PlayBut.Visibility = Visibility.Hidden;
                         PauseBut.Visibility = Visibility.Visible;
                         isPlayFromStart = false;
@@ -887,13 +891,15 @@ namespace YL_Player
         /// <returns></returns>
         private string[] GetFilesFromDirectory(string path)
         {
-            List<string[]> list = new List<string[]>();
-            list.Add(Directory.GetFiles(path, "*?.flac", SearchOption.AllDirectories));
-            list.Add(Directory.GetFiles(path, "*?.mp3", SearchOption.AllDirectories));
-            list.Add(Directory.GetFiles(path, "*?.wav", SearchOption.AllDirectories));
-            list.Add(Directory.GetFiles(path, "*?.ogg", SearchOption.AllDirectories));
-            list.Add(Directory.GetFiles(path, "*?.m3u", SearchOption.AllDirectories));
-            list.Add(Directory.GetFiles(path, "*?.m3u8", SearchOption.AllDirectories));
+            List<string[]> list = new List<string[]>
+            {
+                Directory.GetFiles(path, "*?.flac", SearchOption.AllDirectories),
+                Directory.GetFiles(path, "*?.mp3", SearchOption.AllDirectories),
+                Directory.GetFiles(path, "*?.wav", SearchOption.AllDirectories),
+                Directory.GetFiles(path, "*?.ogg", SearchOption.AllDirectories),
+                Directory.GetFiles(path, "*?.m3u", SearchOption.AllDirectories),
+                Directory.GetFiles(path, "*?.m3u8", SearchOption.AllDirectories)
+            };
             //создаем общий массив
             string[] result = new string[list[0].Length + list[1].Length + list[2].Length + list[3].Length + list[4].Length + list[5].Length];
             //группируем все в один массив
@@ -955,14 +961,14 @@ namespace YL_Player
 
         private void MainMenuItem_MouseUp(object sender, MouseButtonEventArgs e)
         {
+            MainMenu.Visibility = Visibility.Hidden;
             Grid MMI = sender as Grid;
             switch (Convert.ToInt32(MMI.Name.Substring(3)))
             {
                 default:
                     break;
                 case 0: //О программе
-                    About AboutWindow = new About(); //Создание нового окна.
-                    AboutWindow.Owner = this; // Назначение текущего окна владельцем.
+                    About AboutWindow = new About { Owner = this }; //Создание нового окна и назначение текущего окна владельцем.
                     AboutWindow.Show(); // Отображение окна, принадлежащего окну-владельцу.
                     break;
                 case 1: //Справка
@@ -1045,9 +1051,10 @@ namespace YL_Player
             MainMenu.Visibility = Visibility.Visible;
         }
 
-        private void Window_MouseUp(object sender, MouseButtonEventArgs e)
+        private void Window_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            //MainMenu.Visibility = System.Windows.Visibility.Hidden;
+            if (!MainMenu.IsMouseOver && !Icon.IsMouseOver)
+                MainMenu.Visibility = Visibility.Hidden;
         }
 
         ///////////////////////////////////////////////////////
